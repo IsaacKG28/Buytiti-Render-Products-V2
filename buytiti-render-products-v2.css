@@ -1,0 +1,349 @@
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 20px; /* Espacio entre productos */
+}
+
+.woo-product-item-v2 {
+    position: relative;
+    text-align: center; /* Centrar el contenido */
+    border: 1px solid #ddd; /* Bordes para los productos */
+    padding: 10px;
+    border-radius: 20px;
+    height: 29.5rem;
+    width: 100%;
+    margin: 1rem;
+}
+
+.woo-product-item-v2 img {
+    max-width: 14rem; /* Limitar el tamaño de las imágenes */
+    height: auto; /* Mantener la relación de aspecto */
+    margin-top: 1.5rem;
+    transition: 1s;
+}
+.woo-product-item-v2 img:hover{ 
+transform: scale(1.1);
+cursor: pointer;
+}
+
+.new-product-v2{
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 1;
+    background-color: #f2fff6;
+    border: 1px solid #058427;
+    border-radius: 20px 0px 0px 0px;    
+    color: #058427;
+    width: 4rem;
+    font-size: 1rem;
+}
+
+.etiqueta-liquidacionSinApi-v2{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #e4c311; 
+    color: #ffffff; 
+    padding: 3px;
+    z-index: 1;  
+    font-size: .9rem;
+    font-weight: 700;
+    border-radius: 0px 20px 0px 10px;
+}
+.etiqueta-ofertas-en-vivo-v2{
+    position: absolute;
+top: 0;
+right: 0;
+background-color: #F7CACA;
+color: red;
+padding: 3px;
+z-index: 1;
+font-size: .9rem;
+font-weight: 700;
+border-radius: 0px 20px 0px 10px;
+width: 8.5rem;
+}
+    .etiqueta-oferta-v2{
+    position: absolute;
+top: 0;
+right: 0;
+background-color: #F7CACA;
+color: red;
+padding: 3px;
+z-index: 1;
+font-size: .9rem;
+font-weight: 700;
+border-radius: 0px 20px 0px 10px;
+width: 4.5rem;
+}
+
+.etiqueta-ofertas-en-vivo-v2::before {
+content: '•'; /* El punto */
+position: absolute;
+left: 0; /* Alineado a la izquierda */
+top: -5%; /* Centrar verticalmente */
+transform: translateY(-50%); /* Ajustar para centrar */
+color: red; /* Color del punto */
+animation: pulse 1s infinite; /* Aplica la animación de pulso */
+font-size: 2rem;
+margin-left: -.2rem;
+padding-left: .2rem;
+}
+@keyframes pulse {
+0% {
+    transform: scale(1);
+    opacity: 1;
+}
+50% {
+    transform: scale(1.2); /* Aumenta el tamaño */
+    opacity: 0.7; /* Reduce la opacidad */
+}
+100% {
+    transform: scale(1);
+    opacity: 1; /* Vuelve al estado original */
+}
+}
+
+.add-to-cart-button-v2{
+       width: 9.9rem;
+justify-content: center;
+display: flex;
+margin-left: -2rem;
+align-items: center;
+background-color: #ef7e28 !important;
+height: 2.5rem;
+right: 0;
+position: absolute;
+border-radius: 20px 0px 20px 0px !important;
+bottom: 0;
+}
+
+.sku-class-buytiti-v2{
+  color: #00c9b7;
+font-size: .8rem;
+font-weight: 700;
+text-align: center;
+}
+
+.input-quantity-buytiti-v2{ 
+position: absolute;
+left: 0;
+bottom: 0;
+border-radius: 0px 10px 0px 20px !important;
+height: 2rem !important;
+max-width: 70px !important;
+}
+
+.stock-quantity-buytitisinapi-v2{ 
+background-color: #fde5cb;
+border: 1px solid #ff7942;
+border-radius: 15px 0 0 15px;
+color: coral;
+font-size: .6rem;
+font-weight: 700;
+right: 0;
+padding: 0 3px;
+width: 5.2rem;
+position: absolute;
+top: 41%;
+display: none;
+}
+
+.product-brand-buytiti-v2 {
+color: #8b8b8b !important;
+font-size: .7rem;
+font-weight: 600;
+letter-spacing: .3px;
+margin-top: -1.5rem;
+text-align: center;
+text-transform: uppercase;
+}
+
+.product-link-buytiti-v2 {
+text-decoration: none !important;
+}
+
+.product-title-buytiti-v2 {
+color: #5c5c5c !important;
+font-size: .9rem !important;
+overflow: hidden ;
+margin-top: -1rem ;
+font-weight: 700 !important;
+height: 5.5rem;
+display: inline-grid;
+}
+
+.precio-regular-tachado-v2{
+opacity: .8;
+font-weight: 600;
+}
+.sale-price-v2{
+font-size: 1.2rem;
+color: red;
+font-weight: 700;
+}
+.precio-regular-v2{
+font-size: 1.2rem;
+font-weight: 700;
+color: #ff7942;
+}
+.product-discount-buytiti-v2{
+    position: absolute;
+top: 7%;
+right: 0;
+background-color: coral;
+color: #ffffff;
+padding: 3px;
+z-index: 1;
+font-size: .9rem;
+font-weight: 600;
+border-radius: 0px 0px 0px 10px;
+width: 3rem;
+}
+
+@media screen and (min-width: 201px) and (max-width: 420px) {
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 0px; /* Espacio entre productos */
+}
+.woo-product-item-v2 {
+    height: 31.5rem;
+    width: auto;
+    margin: 0rem 0rem 1rem 0rem;
+  }
+  .input-quantity-buytiti-v2{ 
+max-width: 60px !important;
+}
+ .add-to-cart-button-v2{
+width: 7.7rem;
+font-size: 0.8rem !important;
+}
+.woo-product-item-v2 img {
+    max-width: 110px;
+}
+.product-title-buytiti-v2{
+    height: 6.5rem;
+}
+.sku-class-buytiti-v2{
+    height: 1.2rem;
+    display: grid;
+    margin-top: .5rem;
+}
+.product-brand-buytiti-v2 {
+    margin-top: 0rem;
+    height: 1rem;
+    display: grid;
+}
+}
+
+@media screen and (min-width: 401px) and (max-width: 600px) {
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 7px; /* Espacio entre productos */
+}
+.woo-product-item-v2 {
+    height: 30.5rem;
+    width: 98%;
+    margin-bottom: 1rem;
+}
+.input-quantity-buytiti-v2{ 
+max-width: 60px !important;
+}
+ .add-to-cart-button-v2{
+width: 9.5rem;
+}
+.woo-product-item-v2 img {
+    max-width: 110px;
+}
+}
+
+@media screen and (min-width: 601px) and (max-width: 780px) {
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 0px; /* Espacio entre productos */
+}
+.woo-product-item-v2 {
+    height: 32.5rem;
+    width: 13rem;
+    margin-bottom: 1rem;
+}
+ .input-quantity-buytiti-v2{ 
+max-width: 60px !important;
+}
+ .add-to-cart-button-v2{
+width: 8.5rem;
+font-size: 0.85rem !important;
+}
+}@media screen and (min-width: 781px) and (max-width: 1024px) {
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 10px; /* Espacio entre productos */
+}
+.woo-product-item-v2 {
+    width: 100%;
+}
+.add-to-cart-button-v2 {
+    width: 8rem;
+}
+.product-discount-buytiti-v2{
+    font-size: .69rem;
+    width: 2rem;
+}
+}
+@media screen and (min-width: 1024px) and (max-width: 1420px) {
+.woo-products-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Seis columnas para el diseño de cuadrícula */
+    gap: 10px; /* Espacio entre productos */
+}
+.woo-product-item-v2 {
+    width: 100%;
+}
+.add-to-cart-button-v2{
+    width: 7.77rem;
+    font-size: 0.78rem !important;
+}
+.product-discount-buytiti-v2{
+    font-size: .69rem;
+    width: 2rem;
+}
+
+}
+.wishlist_products_counter_number {
+    font-size: 20px !important;
+    color: orange !important;
+}
+.tinv-wishlist .tinvwl_add_to_wishlist_button.tinvwl-icon-custom img,
+a.wishlist_products_counter.top_wishlist-custom img,
+span.wishlist_products_counter.top_wishlist-custom img {
+    max-height: 2rem !important;
+    max-width: 2rem !important;
+}
+.tinv-header {
+    display: none !important;
+}
+.tinv-wraper.tinv-wishlist {
+    position: absolute !important;
+    right: 5% !important;
+    bottom: 59% !important;
+}
+.tinv-wishlist .tinvwl_add_to_wishlist_button.tinvwl-icon-custom.no-txt {
+    width: 21px !important;
+}
+.tinv-wishlist .product-action .button {
+    background-color: #ef7e28 !important;
+}
+.tinv-wishlist .product-action {
+    width: 175px !important;
+}
+.tinv-wishlist tfoot .tinvwl-to-right {
+    float: right !important;
+}
+.tinv-wishlist tfoot .tinvwl-to-right > * {
+    background-color: #ef7e28 !important;
+}
