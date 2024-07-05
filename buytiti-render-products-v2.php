@@ -25,7 +25,10 @@ if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins',
 }
 if (!function_exists('products_enqueue_scripts_styles_v2')) {
     function products_enqueue_scripts_styles_v2() {
+        // Asegurarse de que jQuery está encolado
         wp_enqueue_script('jquery');
+        
+        // Encolar el script de renderizado de productos
         wp_enqueue_script('buytiti-render-script', plugin_dir_url(__FILE__) . 'buytiti-render-products-v2.js', array('jquery'), '1.0', true);
 
         // Localizar el script con parámetros para AJAX
@@ -33,7 +36,16 @@ if (!function_exists('products_enqueue_scripts_styles_v2')) {
             'ajax_url' => admin_url('admin-ajax.php'),
         ));
         
+        // Encolar el estilo de renderizado de productos
         wp_enqueue_style('buytiti-products-render-style', plugin_dir_url(__FILE__) . 'buytiti-render-products-v2.css');
+
+        // Verificar si estamos en la página de prueba
+        if (is_page()) {
+            // Encolar Slick Carousel y asegurarse de que jQuery es una dependencia
+            wp_enqueue_script('slick-js', plugin_dir_url(__FILE__) . 'assets/slick/slick.min.js', array('jquery'), '1.8.1', true);
+            wp_enqueue_style('slick-css', plugin_dir_url(__FILE__) . 'assets/slick/slick.css');
+            wp_enqueue_style('slick-theme-css', plugin_dir_url(__FILE__) . 'assets/slick/slick-theme.css');
+        }
     }
 }
 
@@ -105,7 +117,7 @@ function mi_woo_products_shortcode($atts) {
     }
 
     // Iniciar contenedor con estilo de cuadrícula
-    $output = $mostrar_como_slider ? '<div class="buytiti-product-slider-v2">' : '<div class="woo-products-grid-v2">';
+    $output = $mostrar_como_slider ? '<div class="buytiti-product-slider-v2 slick-hidden">' : '<div class="woo-products-grid-v2">';
 
 
     while ($query->have_posts()) {

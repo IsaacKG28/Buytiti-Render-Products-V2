@@ -79,6 +79,8 @@ jQuery(document).ready(function($) {
                 }
             ]
         });
+        
+        $('.buytiti-product-slider-v2').removeClass('slick-hidden');
     }
 
     // Añadir producto al carrito con AJAX y evitar la recarga de página

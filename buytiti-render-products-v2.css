@@ -1,3 +1,6 @@
+.slick-hidden {
+    display: none;
+}
 .woo-products-grid-v2 {
     display: grid;
     grid-template-columns: repeat(6, 1fr); /* Seis columnas para el diseño de cuadrícula */
@@ -10,17 +13,20 @@
     border: 1px solid #ddd; /* Bordes para los productos */
     padding: 10px;
     border-radius: 20px;
-    height: 29.5rem;
+    height: 28.5rem !important;
     width: 100%;
-    margin: 1rem;
+    margin: .5rem;
 }
 
 .woo-product-item-v2 img {
-    max-width: 14rem; /* Limitar el tamaño de las imágenes */
+    max-width: 12rem; /* Limitar el tamaño de las imágenes */
     height: auto; /* Mantener la relación de aspecto */
-    margin-top: 1.5rem;
+    margin-top: .5rem;
     transition: 1s;
 }
+.slick-slide img {
+    display: inline;
+  }
 .woo-product-item-v2 img:hover{ 
 transform: scale(1.1);
 cursor: pointer;
