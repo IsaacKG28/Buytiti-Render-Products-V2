@@ -23,7 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
     return;
 }
-if (!function_exists('products_enqueue_scripts_styles_v2')) {
+
+if ( ! function_exists( 'products_enqueue_scripts_styles_v2' ) ) {
     function products_enqueue_scripts_styles_v2() {
         // Asegurarse de que jQuery está encolado
         wp_enqueue_script('jquery');
@@ -51,6 +52,51 @@ if (!function_exists('products_enqueue_scripts_styles_v2')) {
 
 add_action('wp_enqueue_scripts', 'products_enqueue_scripts_styles_v2');
 
+function get_bestselling_products($cantidad = 10, $min_sales = 15) {
+    $transient_key = 'bestselling_products_' . $cantidad . '_' . $min_sales;
+    $cached_products = get_transient($transient_key);
+
+    if ($cached_products !== false) {
+        return $cached_products;
+    }
+
+    $args = array(
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'meta_query'     => array(
+            array(
+                'key'     => '_stock_status',
+                'value'   => 'instock',
+                'compare' => '='
+            ),
+            array(
+                'key'     => 'total_sales',
+                'value'   => $min_sales,
+                'type'    => 'numeric',
+                'compare' => '>='
+            )
+        ),
+        'posts_per_page' => $cantidad,
+        'meta_key'       => 'total_sales',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+        'date_query'     => array(
+            array(
+                'column' => 'post_date_gmt',
+                'after'  => date('Y-m-d H:i:s', strtotime('-30 days'))
+            )
+        )
+    );
+
+    $query = new WP_Query($args);
+    $products = $query->posts;
+
+    // Almacenar los resultados en un transient durante 1 hora (3600 segundos)
+    set_transient($transient_key, $products, 3600);
+
+    return $products;
+}
+
 function buytiti_add_to_cart_ajax_v2() {
     $product_id = intval($_POST['product_id']);
     $quantity = intval($_POST['quantity']);
@@ -72,7 +118,10 @@ function mi_woo_products_shortcode($atts) {
         array(
             'cantidad' => 6, // Número de productos por defecto
             'categoria' => '', // Categoría del producto (puede ser vacío)
-            'slider' => 'no' // Por defecto, no mostrar como slider
+            'slider' => 'no', // Por defecto, no mostrar como slider
+            'bestsellers' => 'no', // Por defecto, no mostrar los más vendidos
+            'min_sales' => 15 // Número mínimo de ventas para considerar un producto como "bestseller"
+            
         ),
         $atts,
         'mi_woo_products' // Nombre del shortcode
@@ -81,22 +130,28 @@ function mi_woo_products_shortcode($atts) {
     // Convertir el valor del atributo 'cantidad' a un entero
     $cantidad = intval($atts['cantidad']);
     $mostrar_como_slider = $atts['slider'] === 'yes';
+    $mostrar_bestsellers = $atts['bestsellers'] === 'yes';
+    $min_sales = intval($atts['min_sales']);
 
-    // Argumentos para la consulta de productos
-    $args = array(
-        'post_type'      => 'product',
-        'posts_per_page' => $cantidad, // Usar la cantidad especificada
-        'orderby'        => 'date',   // Ordenar por fecha
-        'order'          => 'DESC',   // En orden descendente para los más recientes
-        'post_status'    => 'publish', // Solo productos publicados
-        'meta_query'     => array(
-            array(
-                'key'     => '_stock_status', // Clave de metadatos para el estado del stock
-                'value'   => 'instock',       // Solo productos en stock
-                'compare' => '=',            // Comparación de igualdad
+    if ($mostrar_bestsellers) {
+        $products = get_bestselling_products($cantidad, $min_sales); // Pasar $min_sales como parámetro
+    } else {
+        // Argumentos para la consulta de productos
+        $args = array(
+            'post_type'      => 'product',
+            'posts_per_page' => $cantidad, // Usar la cantidad especificada
+            'orderby'        => 'date',   // Ordenar por fecha
+            'order'          => 'DESC',   // En orden descendente para los más recientes
+            'post_status'    => 'publish', // Solo productos publicados
+            'meta_query'     => array(
+                array(
+                    'key'     => '_stock_status', // Clave de metadatos para el estado del stock
+                    'value'   => 'instock',       // Solo productos en stock
+                    'compare' => '=',            // Comparación de igualdad
+                ),
             ),
-        ),
-    );
+        );
+    }
 
     // Agregar filtro de categoría si está definido
     if ( ! empty( $atts[ 'categoria' ] ) ) {
@@ -109,7 +164,9 @@ function mi_woo_products_shortcode($atts) {
         );
     }
 
-    $query = new WP_Query( $args );
+    $query = new WP_Query($args);
+    $products = $query->posts;
+    wp_reset_postdata();
 
     if ( ! $query->have_posts() ) {
         return 'No hay productos disponibles.';
@@ -121,7 +178,7 @@ function mi_woo_products_shortcode($atts) {
 
 
     while ($query->have_posts()) {
-        $product_id = $product->ID;
+        // $product_id = $product->ID;
         $query->the_post();
         $product = wc_get_product(get_the_ID());
 
@@ -171,7 +228,7 @@ function mi_woo_products_shortcode($atts) {
         $sale_price = $product->get_sale_price();
         $regular_price = $product->get_regular_price();
 
-        $output .= get_product_labels_v2($product, $sale_price);
+        $output .= get_product_labels_v2($product, $sale_price, $mostrar_bestsellers);
 
         if ($sale_price && $regular_price > 0) {
             $descuento = (($regular_price - $sale_price) / $regular_price) * 100;
@@ -218,7 +275,7 @@ function mi_woo_products_shortcode($atts) {
     return $output;
 }
 
-function get_product_labels_v2($product, $sale_price) {
+function get_product_labels_v2($product, $sale_price, $mostrar_bestsellers) {
     $output = '';
     $categorias = get_the_terms(get_the_ID(), 'product_cat');
     $esOfertaEnVivo = false;
@@ -248,9 +305,17 @@ function get_product_labels_v2($product, $sale_price) {
         $output .= '<span class="etiqueta-oferta-v2">Remate</span>';
     }
 
+    // Añadir etiqueta de "Vendidos" si se están mostrando los bestsellers
+    if ($mostrar_bestsellers) {
+        $total_sales = get_post_meta($product->get_id(), 'total_sales', true);
+        if ($total_sales) {
+            $output .= '<span class="etiqueta-vendidos-v2">Vendidos: ' . $total_sales . '</span>';
+        }
+    }
     return $output;
 }
 
 
 // Registrar el shortcode
 add_shortcode('mi_woo_products', 'mi_woo_products_shortcode');
+?>

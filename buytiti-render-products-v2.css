@@ -353,3 +353,16 @@ span.wishlist_products_counter.top_wishlist-custom img {
 .tinv-wishlist tfoot .tinvwl-to-right > * {
     background-color: #ef7e28 !important;
 }
+.etiqueta-vendidos-v2 {
+    position: absolute;
+    right: 0;
+    background-color: #e17f01;
+    color: #fff;
+    padding: 3px;
+    z-index: 1;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 0 20px 0 10px;
+    top: 0;
+}
+
