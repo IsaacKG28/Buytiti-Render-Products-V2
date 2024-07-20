@@ -1,18 +1,18 @@
 <?php
 /**
-* Plugin Name:       Buytiti - Render - Products
-* Plugin URI:        https://buytiti.com
-* Description:       Plugin para mostrar productos de un e-commerce
-* Requires at least: 6.1
-* Requires PHP:      7.0
-* Version:           0.2.1
-* Author:            Fernando Isaac González Medina
-* License:           GPL-2.0
-* License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-* Text Domain:       buytitipluginproductos
-*
-* @package Buytiti
-*/
+ * Plugin Name:       Buytiti - Render - Products
+ * Plugin URI:        https://buytiti.com
+ * Description:       Plugin para mostrar productos de un e-commerce
+ * Requires at least: 6.1
+ * Requires PHP:      7.0
+ * Version:           0.2.1
+ * Author:            Fernando Isaac González Medina
+ * License:           GPL-2.0
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       buytitipluginproductos
+ *
+ * @package Buytiti
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
@@ -24,7 +24,7 @@ if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins',
     return;
 }
 
-if ( ! function_exists( 'products_enqueue_scripts_styles_v2' ) ) {
+if (!function_exists('products_enqueue_scripts_styles_v2')) {
     function products_enqueue_scripts_styles_v2() {
         // Asegurarse de que jQuery está encolado
         wp_enqueue_script('jquery');
@@ -52,51 +52,6 @@ if ( ! function_exists( 'products_enqueue_scripts_styles_v2' ) ) {
 
 add_action('wp_enqueue_scripts', 'products_enqueue_scripts_styles_v2');
 
-function get_bestselling_products($cantidad = 10, $min_sales = 15) {
-    $transient_key = 'bestselling_products_' . $cantidad . '_' . $min_sales;
-    $cached_products = get_transient($transient_key);
-
-    if ($cached_products !== false) {
-        return $cached_products;
-    }
-
-    $args = array(
-        'post_type'      => 'product',
-        'post_status'    => 'publish',
-        'meta_query'     => array(
-            array(
-                'key'     => '_stock_status',
-                'value'   => 'instock',
-                'compare' => '='
-            ),
-            array(
-                'key'     => 'total_sales',
-                'value'   => $min_sales,
-                'type'    => 'numeric',
-                'compare' => '>='
-            )
-        ),
-        'posts_per_page' => $cantidad,
-        'meta_key'       => 'total_sales',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'DESC',
-        'date_query'     => array(
-            array(
-                'column' => 'post_date_gmt',
-                'after'  => date('Y-m-d H:i:s', strtotime('-30 days'))
-            )
-        )
-    );
-
-    $query = new WP_Query($args);
-    $products = $query->posts;
-
-    // Almacenar los resultados en un transient durante 1 hora (3600 segundos)
-    set_transient($transient_key, $products, 3600);
-
-    return $products;
-}
-
 function buytiti_add_to_cart_ajax_v2() {
     $product_id = intval($_POST['product_id']);
     $quantity = intval($_POST['quantity']);
@@ -112,6 +67,41 @@ function buytiti_add_to_cart_ajax_v2() {
 add_action('wp_ajax_buytiti_add_to_cart', 'buytiti_add_to_cart_ajax_v2');
 add_action('wp_ajax_nopriv_buytiti_add_to_cart', 'buytiti_add_to_cart_ajax_v2');
 
+function buytiti_get_bestsellers_last_30_days($cantidad = 20) {
+    $date_30_days_ago = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+    $args = array(
+        'post_type' => 'product',
+        'post_status' => 'publish',
+        'posts_per_page' => $cantidad,
+        'meta_query' => array(
+            array(
+                'key' => '_stock_status',
+                'value' => 'instock',
+                'compare' => '='
+            ),
+            array(
+                'key' => 'total_sales',
+                'value' => 20,
+                'compare' => '>',
+                'type' => 'NUMERIC'
+            )
+        ),
+        'date_query' => array(
+            array(
+                'column' => 'post_date_gmt',
+                'after' => $date_30_days_ago
+            )
+        ),
+        'orderby' => 'meta_value_num',
+        'order' => 'DESC'
+    );
+
+    $query = new WP_Query($args);
+
+    return $query->posts;
+}
+
 function mi_woo_products_shortcode($atts) {
     // Establecer atributos por defecto
     $atts = shortcode_atts(
@@ -119,75 +109,65 @@ function mi_woo_products_shortcode($atts) {
             'cantidad' => 6, // Número de productos por defecto
             'categoria' => '', // Categoría del producto (puede ser vacío)
             'slider' => 'no', // Por defecto, no mostrar como slider
-            'bestsellers' => 'no', // Por defecto, no mostrar los más vendidos
-            'min_sales' => 15 // Número mínimo de ventas para considerar un producto como "bestseller"
-            
+            'bestsellers' => 'no' // Mostrar los productos más vendidos de los últimos 30 días
         ),
         $atts,
         'mi_woo_products' // Nombre del shortcode
     );
 
-    // Convertir el valor del atributo 'cantidad' a un entero
     $cantidad = intval($atts['cantidad']);
     $mostrar_como_slider = $atts['slider'] === 'yes';
     $mostrar_bestsellers = $atts['bestsellers'] === 'yes';
-    $min_sales = intval($atts['min_sales']);
 
-    if ($mostrar_bestsellers) {
-        $products = get_bestselling_products($cantidad, $min_sales); // Pasar $min_sales como parámetro
-    } else {
-        // Argumentos para la consulta de productos
-        $args = array(
-            'post_type'      => 'product',
-            'posts_per_page' => $cantidad, // Usar la cantidad especificada
-            'orderby'        => 'date',   // Ordenar por fecha
-            'order'          => 'DESC',   // En orden descendente para los más recientes
-            'post_status'    => 'publish', // Solo productos publicados
-            'meta_query'     => array(
-                array(
-                    'key'     => '_stock_status', // Clave de metadatos para el estado del stock
-                    'value'   => 'instock',       // Solo productos en stock
-                    'compare' => '=',            // Comparación de igualdad
-                ),
-            ),
-        );
-    }
-
-    // Agregar filtro de categoría si está definido
-    if ( ! empty( $atts[ 'categoria' ] ) ) {
-        $args[ 'tax_query' ] = array(
+    // Argumentos para la consulta de productos
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => $cantidad,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'post_status' => 'publish',
+        'meta_query' => array(
             array(
-                'taxonomy' => 'product_cat',
-                'field'    => 'slug',
-                'terms'    => $atts[ 'categoria' ],
+                'key' => '_stock_status',
+                'value' => 'instock',
+                'compare' => '=',
             ),
-        );
+        ),
+    );
+
+    // Consultar los productos más vendidos si se selecciona la opción
+    if ($mostrar_bestsellers) {
+        $productos = buytiti_get_bestsellers_last_30_days($cantidad);
+    } else {
+        if (!empty($atts['categoria'])) {
+            $args['tax_query'] = array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'slug',
+                    'terms' => $atts['categoria']
+                ),
+            );
+        }
+        $query = new WP_Query($args);
+        $productos = $query->posts;
     }
 
-    $query = new WP_Query($args);
-    $products = $query->posts;
-    wp_reset_postdata();
-
-    if ( ! $query->have_posts() ) {
+    if (empty($productos)) {
         return 'No hay productos disponibles.';
-        // Manejar caso sin productos
     }
 
     // Iniciar contenedor con estilo de cuadrícula
     $output = $mostrar_como_slider ? '<div class="buytiti-product-slider-v2 slick-hidden">' : '<div class="woo-products-grid-v2">';
 
-
-    while ($query->have_posts()) {
-        // $product_id = $product->ID;
-        $query->the_post();
-        $product = wc_get_product(get_the_ID());
+    foreach ($productos as $producto_id) {
+        $product = wc_get_product($producto_id);
 
         if (!$product) {
             continue;
         }
 
-        $output .= '<div class="woo-product-item-v2" id="product-' . get_the_ID() . '">';
-        $product_link = get_permalink(get_the_ID());
+        $output .= '<div class="woo-product-item-v2" id="product-' . $product->get_id() . '">';
+        $product_link = get_permalink($product->get_id());
 
         $image_url = '';
         $image_id = $product->get_image_id();
@@ -203,12 +183,12 @@ function mi_woo_products_shortcode($atts) {
 
         $output .= '<a href="' . esc_url($product_link) . '" class="product-image-link-v2">';
         if ($image_url) {
-            $output .= '<img src="' . esc_url($image_url) . '" alt="' . esc_attr(get_the_title()) . '" class="primary-image-v2">';
+            $output .= '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($product->get_name()) . '" class="primary-image-v2">';
         } else {
             $output .= '<span>No hay imagen disponible</span>';
         }
         if ($secondary_image_url) {
-            $output .= '<img src="' . esc_url($secondary_image_url) . '" alt="' . esc_attr(get_the_title()) . '" class="secondary-image-v2" style="display:none;">';
+            $output .= '<img src="' . esc_url($secondary_image_url) . '" alt="' . esc_attr($product->get_name()) . '" class="secondary-image-v2" style="display:none;">';
         }
         $output .= '</a><br>';
 
@@ -222,17 +202,19 @@ function mi_woo_products_shortcode($atts) {
             $output .= '<span class="new-product-v2">Nuevo</span>';
         }
 
-        // $stock = $product->get_stock_quantity();
-        // $output .= '<span class="' . esc_attr('stock-quantity-buytitisinapi-v2') . '">Disponible: ' . esc_html($stock) . '</span><br>';
-
         $sale_price = $product->get_sale_price();
         $regular_price = $product->get_regular_price();
 
-        $output .= get_product_labels_v2($product, $sale_price, $mostrar_bestsellers);
+        $output .= get_product_labels_v2($product, $sale_price);
 
         if ($sale_price && $regular_price > 0) {
             $descuento = (($regular_price - $sale_price) / $regular_price) * 100;
             $output .= '<span class="product-discount-buytiti-v2">-' . round($descuento) . '%</span>';
+        }
+
+        if ($mostrar_bestsellers) {
+            $total_sales = get_post_meta($product->get_id(), 'total_sales', true);
+            $output .= '<span class="bestseller-sales-v2">Vendidos: ' . $total_sales . '</span>';
         }
 
         $sku = $product->get_sku();
@@ -242,14 +224,14 @@ function mi_woo_products_shortcode($atts) {
 
         $marca = $product->get_attribute('Marca');
         if (!$marca) {
-            $categorias = get_the_terms(get_the_ID(), 'product_cat');
+            $categorias = get_the_terms($product->get_id(), 'product_cat');
             $categoria = $categorias ? $categorias[0]->name : '';
             $marca = 'BUYTITI - ' . $categoria;
         }
         $output .= '<span class="' . esc_attr('product-brand-buytiti-v2') . '">' . esc_html($marca) . '</span><br>';
 
         $output .= '<a href="' . esc_url($product_link) . '" class="' . esc_attr('product-link-buytiti-v2') . '">';
-        $output .= '<strong class="' . esc_attr('product-title-buytiti-v2') . '">' . esc_html(get_the_title()) . '</strong>';
+        $output .= '<strong class="' . esc_attr('product-title-buytiti-v2') . '">' . esc_html($product->get_name()) . '</strong>';
         $output .= '</a><br>';
 
         if ($sale_price) {
@@ -259,12 +241,10 @@ function mi_woo_products_shortcode($atts) {
         }
 
         $output .= '<form class="add-to-cart-form-v2" method="post">';
-            $output .= '<input type="hidden" name="add-to-cart" value="' . esc_attr(get_the_ID()) . '">';
-            // $output .= '<input type="hidden" name="product-anchor" value="product-' . esc_attr(get_the_ID()) . '">';
-            $output .= '<input type="number" name="quantity" value="1" min="1" class="' . esc_attr('input-quantity-buytiti-v2') . '" style="margin-right:10px;">';
-            $output .= '<input type="submit" value="Añadir al carrito" class="add-to-cart-button-v2">';
+        $output .= '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
+        $output .= '<input type="number" name="quantity" value="1" min="1" class="' . esc_attr('input-quantity-buytiti-v2') . '" style="margin-right:10px;">';
+        $output .= '<input type="submit" value="Añadir al carrito" class="add-to-cart-button-v2">';
         $output .= '</form>';
-        
 
         $output .= '</div>';
     }
@@ -275,7 +255,7 @@ function mi_woo_products_shortcode($atts) {
     return $output;
 }
 
-function get_product_labels_v2($product, $sale_price, $mostrar_bestsellers) {
+function get_product_labels_v2($product, $sale_price) {
     $output = '';
     $categorias = get_the_terms(get_the_ID(), 'product_cat');
     $esOfertaEnVivo = false;
@@ -305,17 +285,8 @@ function get_product_labels_v2($product, $sale_price, $mostrar_bestsellers) {
         $output .= '<span class="etiqueta-oferta-v2">Remate</span>';
     }
 
-    // Añadir etiqueta de "Vendidos" si se están mostrando los bestsellers
-    if ($mostrar_bestsellers) {
-        $total_sales = get_post_meta($product->get_id(), 'total_sales', true);
-        if ($total_sales) {
-            $output .= '<span class="etiqueta-vendidos-v2">Vendidos: ' . $total_sales . '</span>';
-        }
-    }
     return $output;
 }
 
-
 // Registrar el shortcode
 add_shortcode('mi_woo_products', 'mi_woo_products_shortcode');
-?>

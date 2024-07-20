@@ -4,7 +4,7 @@
 .woo-products-grid-v2 {
     display: grid;
     grid-template-columns: repeat(6, 1fr); /* Seis columnas para el diseño de cuadrícula */
-    gap: 20px; /* Espacio entre productos */
+    gap: 10px; /* Espacio entre productos */
 }
 
 .woo-product-item-v2 {
@@ -15,11 +15,11 @@
     border-radius: 20px;
     height: 28.5rem !important;
     width: 100%;
-    margin: .5rem;
+    margin: .1rem;
 }
 
 .woo-product-item-v2 img {
-    max-width: 12rem; /* Limitar el tamaño de las imágenes */
+    max-width: 11rem; /* Limitar el tamaño de las imágenes */
     height: auto; /* Mantener la relación de aspecto */
     margin-top: .5rem;
     transition: 1s;
@@ -70,18 +70,18 @@ font-weight: 700;
 border-radius: 0px 20px 0px 10px;
 width: 8.5rem;
 }
-    .etiqueta-oferta-v2{
+.etiqueta-oferta-v2{
     position: absolute;
-top: 0;
-right: 0;
-background-color: #F7CACA;
-color: red;
-padding: 3px;
-z-index: 1;
-font-size: .9rem;
-font-weight: 700;
-border-radius: 0px 20px 0px 10px;
-width: 4.5rem;
+    top: 0;
+    right: 0;
+    background-color: #F7CACA;
+    color: red;
+    padding: 3px;
+    z-index: 1;
+    font-size: .9rem;
+    font-weight: 700;
+    border-radius: 0px 20px 0px 10px;
+    width: 4.5rem;
 }
 
 .etiqueta-ofertas-en-vivo-v2::before {
@@ -353,16 +353,15 @@ span.wishlist_products_counter.top_wishlist-custom img {
 .tinv-wishlist tfoot .tinvwl-to-right > * {
     background-color: #ef7e28 !important;
 }
-.etiqueta-vendidos-v2 {
+.bestseller-sales-v2{
     position: absolute;
     right: 0;
     background-color: #e17f01;
     color: #fff;
-    padding: 3px;
+    padding: 2px;
     z-index: 1;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 610;
     border-radius: 0 20px 0 10px;
     top: 0;
 }
-
