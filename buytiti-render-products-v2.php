@@ -66,6 +66,13 @@ function buytiti_add_to_cart_ajax_v2() {
 }
 add_action('wp_ajax_buytiti_add_to_cart', 'buytiti_add_to_cart_ajax_v2');
 add_action('wp_ajax_nopriv_buytiti_add_to_cart', 'buytiti_add_to_cart_ajax_v2');
+function buytiti_get_cart_content() {
+    // Obtener los fragmentos del carrito de WooCommerce
+    $fragments = WC_AJAX::get_refreshed_fragments();
+    wp_send_json_success(array('fragments' => $fragments));
+}
+add_action('wp_ajax_buytiti_get_cart_content', 'buytiti_get_cart_content');
+add_action('wp_ajax_nopriv_buytiti_get_cart_content', 'buytiti_get_cart_content');
 
 function buytiti_get_bestsellers_last_30_days($cantidad = 20) {
     $date_30_days_ago = date('Y-m-d H:i:s', strtotime('-30 days'));
