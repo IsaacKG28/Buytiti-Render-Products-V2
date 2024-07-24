@@ -75,39 +75,49 @@ add_action('wp_ajax_buytiti_get_cart_content', 'buytiti_get_cart_content');
 add_action('wp_ajax_nopriv_buytiti_get_cart_content', 'buytiti_get_cart_content');
 
 function buytiti_get_bestsellers_last_30_days($cantidad = 20) {
-    $date_30_days_ago = date('Y-m-d H:i:s', strtotime('-30 days'));
+    $transient_key = 'bestsellers_last_30_days';
+    $productos = get_transient($transient_key);
 
-    $args = array(
-        'post_type' => 'product',
-        'post_status' => 'publish',
-        'posts_per_page' => $cantidad,
-        'meta_query' => array(
-            array(
-                'key' => '_stock_status',
-                'value' => 'instock',
-                'compare' => '='
+    if (false === $productos) {
+        $date_30_days_ago = date('Y-m-d H:i:s', strtotime('-30 days'));
+
+        $args = array(
+            'post_type' => 'product',
+            'post_status' => 'publish',
+            'posts_per_page' => $cantidad,
+            'meta_query' => array(
+                array(
+                    'key' => '_stock_status',
+                    'value' => 'instock',
+                    'compare' => '='
+                ),
+                array(
+                    'key' => 'total_sales',
+                    'value' => 20,
+                    'compare' => '>',
+                    'type' => 'NUMERIC'
+                )
             ),
-            array(
-                'key' => 'total_sales',
-                'value' => 20,
-                'compare' => '>',
-                'type' => 'NUMERIC'
-            )
-        ),
-        'date_query' => array(
-            array(
-                'column' => 'post_date_gmt',
-                'after' => $date_30_days_ago
-            )
-        ),
-        'orderby' => 'meta_value_num',
-        'order' => 'DESC'
-    );
+            'date_query' => array(
+                array(
+                    'column' => 'post_date_gmt',
+                    'after' => $date_30_days_ago
+                )
+            ),
+            'meta_key' => 'total_sales',
+            'orderby' => 'meta_value_num',
+            'order' => 'DESC'
+        );
 
-    $query = new WP_Query($args);
+        $query = new WP_Query($args);
+        $productos = $query->posts;
 
-    return $query->posts;
+        set_transient($transient_key, $productos, 12 * HOUR_IN_SECONDS);
+    }
+
+    return $productos;
 }
+
 
 function mi_woo_products_shortcode($atts) {
     // Establecer atributos por defecto
@@ -261,7 +271,14 @@ function mi_woo_products_shortcode($atts) {
 
     return $output;
 }
-
+function modify_query_for_bestsellers($query) {
+    if (!is_admin() && $query->is_main_query() && isset($query->query_vars['bestsellers']) && $query->query_vars['bestsellers'] === 'yes') {
+        $query->set('meta_key', 'total_sales');
+        $query->set('orderby', 'meta_value_num');
+        $query->set('order', 'DESC');
+    }
+}
+add_action('pre_get_posts', 'modify_query_for_bestsellers');
 function get_product_labels_v2($product, $sale_price) {
     $output = '';
     $categorias = get_the_terms(get_the_ID(), 'product_cat');
