@@ -184,6 +184,9 @@ function mi_woo_products_shortcode($atts) {
         }
 
         $output .= '<div class="woo-product-item-v2" id="product-' . $product->get_id() . '">';
+
+        // Inicia contenedor de imágenes
+        $output .= '<div class="product-images-container-v2">';
         $product_link = get_permalink($product->get_id());
 
         $image_url = '';
@@ -207,8 +210,17 @@ function mi_woo_products_shortcode($atts) {
         if ($secondary_image_url) {
             $output .= '<img src="' . esc_url($secondary_image_url) . '" alt="' . esc_attr($product->get_name()) . '" class="secondary-image-v2" style="display:none;">';
         }
-        $output .= '</a><br>';
+        $output .= '</a>';
 
+        $output .= '<form class="add-to-cart-form-v2" method="post">';
+        $output .= '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
+        $output .= '<input type="number" name="quantity" value="1" min="1" class="' . esc_attr('input-quantity-buytiti-v2') . '" style="margin-right:10px;">';
+        $output .= '<input type="submit" value="Añadir al carrito" class="add-to-cart-button-v2">';
+        $output .= '</form>';
+        $output .= '</div>'; // Fin del contenedor de imágenes
+
+        // Inicia contenedor de información
+        $output .= '<div class="product-info-container-v2">';
         $output .= do_shortcode('[ti_wishlists_addtowishlist]');
 
         $published_date = get_the_date('U');
@@ -224,10 +236,7 @@ function mi_woo_products_shortcode($atts) {
 
         $output .= get_product_labels_v2($product, $sale_price);
 
-        if ($sale_price && $regular_price > 0) {
-            $descuento = (($regular_price - $sale_price) / $regular_price) * 100;
-            $output .= '<span class="product-discount-buytiti-v2">-' . round($descuento) . '%</span>';
-        }
+
 
         if ($mostrar_bestsellers) {
             $total_sales = get_post_meta($product->get_id(), 'total_sales', true);
@@ -243,27 +252,27 @@ function mi_woo_products_shortcode($atts) {
         if (!$marca) {
             $categorias = get_the_terms($product->get_id(), 'product_cat');
             $categoria = $categorias ? $categorias[0]->name : '';
-            $marca = 'BUYTITI - ' . $categoria;
+            $marca = '' . $categoria;
         }
-        $output .= '<span class="' . esc_attr('product-brand-buytiti-v2') . '">' . esc_html($marca) . '</span><br>';
+        $output .= '<span class="' . esc_attr('product-brand-buytiti-v2') . '">' . esc_html($marca) . '</span>';
 
         $output .= '<a href="' . esc_url($product_link) . '" class="' . esc_attr('product-link-buytiti-v2') . '">';
         $output .= '<strong class="' . esc_attr('product-title-buytiti-v2') . '">' . esc_html($product->get_name()) . '</strong>';
         $output .= '</a><br>';
 
         if ($sale_price) {
-            $output .= '<span class="precio"><del class="precio-regular-tachado-v2">' . wc_price($regular_price) . '</del> <ins class="sale-price-v2">' . wc_price($sale_price) . '</ins></span><br>';
+            $output .= '<span class="precio"><del class="precio-regular-tachado-v2">' . wc_price($regular_price) . '</del> <ins class="sale-price-v2">' . wc_price($sale_price) . '</ins></span>';
         } else {
-            $output .= '<span class="precio precio-regular-v2">' . wc_price($regular_price) . '</span><br>';
+            $output .= '<span class="precio precio-regular-v2">' . wc_price($regular_price) . '</span>';
+        }
+        if ($sale_price && $regular_price > 0) {
+            $descuento = (($regular_price - $sale_price) / $regular_price) * 100;
+            $output .= '<span class="product-discount-buytiti-v2">-' . round($descuento) . '%</span>';
         }
 
-        $output .= '<form class="add-to-cart-form-v2" method="post">';
-        $output .= '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
-        $output .= '<input type="number" name="quantity" value="1" min="1" class="' . esc_attr('input-quantity-buytiti-v2') . '" style="margin-right:10px;">';
-        $output .= '<input type="submit" value="Añadir al carrito" class="add-to-cart-button-v2">';
-        $output .= '</form>';
+        $output .= '</div>'; // Fin del contenedor de información
 
-        $output .= '</div>';
+        $output .= '</div>'; // Fin del contenedor de producto
     }
 
     wp_reset_postdata();
@@ -279,6 +288,7 @@ function modify_query_for_bestsellers($query) {
     }
 }
 add_action('pre_get_posts', 'modify_query_for_bestsellers');
+
 function get_product_labels_v2($product, $sale_price) {
     $output = '';
     $categorias = get_the_terms(get_the_ID(), 'product_cat');
