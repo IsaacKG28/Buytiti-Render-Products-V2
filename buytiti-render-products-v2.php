@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Buytiti - Render - Products
+ * Plugin Name:       Buytiti - Render - Products - V2
  * Plugin URI:        https://buytiti.com
  * Description:       Plugin para mostrar productos de un e-commerce
  * Requires at least: 6.1
@@ -211,13 +211,13 @@ function mi_woo_products_shortcode($atts) {
             $output .= '<img src="' . esc_url($secondary_image_url) . '" alt="' . esc_attr($product->get_name()) . '" class="secondary-image-v2" style="display:none;">';
         }
         $output .= '</a>';
-
+        $output .= '</div>'; // Fin del contenedor de imágenes
         $output .= '<form class="add-to-cart-form-v2" method="post">';
         $output .= '<input type="hidden" name="add-to-cart" value="' . esc_attr($product->get_id()) . '">';
         $output .= '<input type="number" name="quantity" value="1" min="1" class="' . esc_attr('input-quantity-buytiti-v2') . '" style="margin-right:10px;">';
         $output .= '<input type="submit" value="Añadir al carrito" class="add-to-cart-button-v2">';
         $output .= '</form>';
-        $output .= '</div>'; // Fin del contenedor de imágenes
+
 
         // Inicia contenedor de información
         $output .= '<div class="product-info-container-v2">';
@@ -245,7 +245,7 @@ function mi_woo_products_shortcode($atts) {
 
         $sku = $product->get_sku();
         if ($sku) {
-            $output .= '<span class="' . esc_attr('sku-class-buytiti-v2') . '">SKU: ' . esc_html($sku) . '</span><br>';
+            $output .= '<span class="' . esc_attr('sku-class-buytiti-v2') . '">SKU: ' . esc_html($sku) . '</span><br class="break-on-desktop">';
         }
 
         $marca = $product->get_attribute('Marca');
