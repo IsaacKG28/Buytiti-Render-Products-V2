@@ -81,15 +81,14 @@ jQuery(document).ready(function($) {
         });
         
         $('.buytiti-product-slider-v2').removeClass('slick-hidden');
+        
     }
-
     // Añadir producto al carrito con AJAX y evitar la recarga de página
-    $(".add-to-cart-form-v2").on("click", function(e) {
-        e.preventDefault(); // Evitar el comportamiento predeterminado del formulario
-        var form = $(this);
-        var product_id = form.find('input[name=\"add-to-cart\"]').val();
-        var quantity = form.find('input[name=\"quantity\"]').val();
-
+    $(".add-to-cart-button-v2").on("click", function(e) { // Cambié el selector a .add-to-cart-button-v2
+        e.preventDefault(); // Evitar el comportamiento predeterminado del botón de submit
+        var form = $(this).closest('form'); // Encontrar el formulario padre
+        var product_id = form.find('input[name="add-to-cart"]').val();
+        var quantity = form.find('input[name="quantity"]').val();
         // Lógica AJAX para añadir al carrito
         $.ajax({
             url: buytiti_ajax.ajax_url, // URL AJAX de WooCommerce

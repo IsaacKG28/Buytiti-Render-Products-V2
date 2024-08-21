@@ -73,6 +73,7 @@ function buytiti_get_cart_content() {
 }
 add_action('wp_ajax_buytiti_get_cart_content', 'buytiti_get_cart_content');
 add_action('wp_ajax_nopriv_buytiti_get_cart_content', 'buytiti_get_cart_content');
+//BANNER 
 
 function buytiti_get_bestsellers_last_30_days($cantidad = 20) {
     $transient_key = 'bestsellers_last_30_days';

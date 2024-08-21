@@ -1,19 +1,24 @@
 .slick-hidden {
     display: none;
 }
+.offer-banner{
+    display: none;
+}
 .woo-products-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* Seis columnas para el diseño de cuadrícula */
-    gap: 15px; /* Espacio entre productos */
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 15px;
     margin-bottom: .5rem;
-}
-
+    margin: 0 auto;
+    justify-content: center;
+    max-width: 86%;
+  }
 .woo-product-item-v2 {
     position: relative;
     text-align: center; /* Centrar el contenido */
     border: 1px solid #ddd; /* Bordes para los productos */
     border-radius: 20px;
-    height: 26rem !important;
+    height: 25rem !important;
     margin: .1rem;
     transition: transform 0.6s ease-in-out, box-shadow 0.6s, opacity 0.6s; /* Suavizar las transiciones */
 }
@@ -201,10 +206,10 @@ text-decoration: none !important;
 
 .product-title-buytiti-v2 {
 color: black !important;
-font-size: .8rem !important;
+font-size: .8rem;
 overflow: hidden ;
 font-weight: 600 !important;
-height: 3.5rem;
+height: 2.5rem;
 display: inline-grid;
 width: 100%;
 }
@@ -221,7 +226,7 @@ font-weight: 700;
 background: none;
 }
 .precio-regular-v2{
-font-size: 1.1rem;
+font-size: 1.3rem;
 font-weight: 700;
 color: #ff7942;
 }
@@ -239,11 +244,12 @@ color: #ff7942;
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Seis columnas para el diseño de cuadrícula */
     gap: 4px; /* Espacio entre productos */
+    max-width: 97%;
 }
 .woo-product-item-v2 {
-    height: 21.7rem !important;
+    height: 18.5rem !important;
     width: auto;
-    margin: 0rem 0rem 1rem 0rem;
+    margin: 0rem 0rem .5rem 0rem;
   }
   .break-on-desktop {
     display: none;
@@ -261,14 +267,19 @@ opacity: 1;
     transform: none;
 }
  .add-to-cart-button-v2{
-font-size: 0.7rem;
+    font-size: 0.7rem;
+    color: white !important;
+    background-color:#ef7e28 !important;
+    transform: none;
+    display: block;
 }
 .woo-product-item-v2 img {
-    width: 11rem;
-    height: 12rem;
+    width: 11.5rem;
+    height: 11rem;
 }
 .product-title-buytiti-v2{
-    height: 3.5rem;
+    height: 2.5rem;
+    font-size: .75rem;
 }
 .sale-price-v2{
     font-size: .9rem;
@@ -276,42 +287,102 @@ font-size: 0.7rem;
 .sku-class-buytiti-v2{
     height: 1rem;
     display: grid;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 650;
+    overflow: hidden;
+    display: none;
 }
 .product-brand-buytiti-v2 {
     margin-top: 0rem;
     height: 1rem;
     display: grid;
+    font-size: 0.6rem;
+    font-weight: 600;
 }
-.input-quantity-buytiti-v2,
-.add-to-cart-button-v2 {
+.input-quantity-buytiti-v2 {
    transform: none;
    display: block;
 }
+.precio-regular-v2{
+    font-size: 1.1rem;
+    }
+    .woo-product-item-v2:hover {
+        transform:none;
+        box-shadow: none;
+    }
 }
 
 @media screen and (min-width: 421px) and (max-width: 600px) {
-.woo-products-grid-v2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Seis columnas para el diseño de cuadrícula */
-    gap: 7px; /* Espacio entre productos */
-}
-.woo-product-item-v2 {
-    height: 28.5rem;
-    width: 98%;
-    margin-bottom: 1rem;
-}
-.input-quantity-buytiti-v2{ 
-max-width: 60px !important;
-}
- .add-to-cart-button-v2{
-height: 2rem;
-}
-.woo-product-item-v2 img {
-    max-width: 12rem;
-    height: 12rem;
-}
+    .woo-products-grid-v2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Seis columnas para el diseño de cuadrícula */
+        gap: 4px; /* Espacio entre productos */
+        max-width: 97%;
+    }
+    .woo-product-item-v2 {
+        height: 18.5rem !important;
+        width: auto;
+        margin: 0rem 0rem .5rem 0rem;
+      }
+      .break-on-desktop {
+        display: none;
+    }
+      .input-quantity-buytiti-v2{ 
+    max-width: 60px !important;
+    opacity: 1;
+    }
+    .woo-product-item-v2:hover .input-quantity-buytiti-v2,
+    .woo-product-item-v2:hover .add-to-cart-button-v2,
+    .woo-product-item-v2:hover .add-to-cart-form-v2 {
+        display: flex;
+        transition: opacity 0.6s ease-in-out; /* Suavizar la transición de aparición */
+        opacity: 1;
+        transform: none;
+    }
+     .add-to-cart-button-v2{
+    font-size: 0.7rem;
+    color: white !important;
+    background-color:#ef7e28 !important;
+    transform: none;
+    display: block;
+    }
+    .woo-product-item-v2 img {
+        width: 11rem;
+        height: 11rem;
+    }
+    .product-title-buytiti-v2{
+        height: 2.5rem;
+        font-size: .75rem;
+    }
+    .sale-price-v2{
+        font-size: .9rem;
+        }
+    .sku-class-buytiti-v2{
+        height: 1rem;
+        display: grid;
+        font-size: 0.7rem;
+        font-weight: 650;
+        overflow: hidden;
+        display: none;
+    }
+    .product-brand-buytiti-v2 {
+        margin-top: 0rem;
+        height: 1rem;
+        display: grid;
+        font-size: 0.6rem;
+        font-weight: 600;
+    }
+    .input-quantity-buytiti-v2 {
+       transform: none;
+       display: block;
+    }
+    .precio-regular-v2{
+        font-size: 1.1rem;
+        }
+        .woo-product-item-v2:hover {
+            transform:none;
+            box-shadow: none;
+        }
 }
 
 @media screen and (min-width: 601px) and (max-width: 780px) {
@@ -363,14 +434,6 @@ font-size: 0.85rem;
 }
 
 }
-@media screen and (min-width: 1420px) and (max-width: 1740px) {
-    .woo-products-grid-v2 {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr); /* Seis columnas para el diseño de cuadrícula */
-        gap: 10px; /* Espacio entre productos */
-    }
-    
-    }
 .wishlist_products_counter_number {
     font-size: 20px !important;
     color: orange !important;
